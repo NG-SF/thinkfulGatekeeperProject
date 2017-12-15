@@ -66,23 +66,14 @@ const USERS = [
 function gateKeeper(req, res, next) {
   // your code should replace the line below
   
-  //get the query string 
-  let headerUserPassword = req.get('x-username-and-password');
-  
-  //parse string into object
-  let userPasswordObj = queryString.parse(headerUserPassword);
-  
-  let index = Object.keys(USERS).findIndex( (user) => user.userName === userPasswordObj.user);
-  
-  console.log(USERS[0].userName, userPasswordObj.user, index, USERS[0]);
-  
-      // check if received username is in our USERS object
-  if (Object.keys(USERS).find( (user) => user.userName === userPasswordObj.user)) {
-    console.log('hi');
-    
-    req.user = USERS[0];
-  } 
-  
+  //parsed query string into object
+  const userPassObj = queryString.parse(req.get('x-username-and-password'));
+  const user = userPassObj.user || null;
+  const password = userPassObj.pass || null;
+ 
+  req.user = USERS.find(
+    (el) => el.userName === user && el.password === password);
+  console.log(user, password, req.user);
   next();
 }
 
